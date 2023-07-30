@@ -3,9 +3,13 @@ use MS::*;
 
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 fn main() {
+    let context = tauri::generate_context!();
     tauri::Builder::default()
-        .run(tauri::generate_context!())
+        .invoke_handler(tauri::generate_handler![greet])
+        .menu(tauri::Menu::os_default(&context.package_info().name))
+        .run(context)
         .expect("error while running tauri application");
+    
     // let args: Vec<String> = env::args().collect();
     // let config = GameConfig::init(&args)
     //         .unwrap_or_else(|err| {
@@ -42,4 +46,11 @@ fn main() {
     // } else {
     //     lose();
     // }
+}
+
+#[tauri::command]
+fn greet(name: &str) -> String {
+    let mut greet_line: String = "Hello, !".to_string();
+    greet_line.insert_str(6, name);
+    greet_line
 }
