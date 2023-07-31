@@ -129,6 +129,20 @@ impl Board {
         }
         println!();
     }
+    fn show_board(&self, buffer: &mut Vec<String>) {
+        let hid: String = "".to_string();
+        let fla: String = "&#128681".to_string();
+        buffer.clear();
+        for line in self.board.iter() {
+            for p in line.iter() {
+                match p {
+                    DisplayStatus::Hidden => buffer.push(hid.clone()),
+                    DisplayStatus::Flagged => buffer.push(fla.clone()),
+                    DisplayStatus::Visible(c) => buffer.push(c.to_string()),
+                }
+            }
+        }
+    }
 }
 
 impl Game {
@@ -190,6 +204,9 @@ impl Game {
         for (i, _) in self.board.board.iter().enumerate() {
             self.board.show_line(i, buffer);
         }
+    }
+    pub fn show_str(&self, buffer: &mut Vec<String>) {
+        self.board.show_board(buffer);
     }
     fn check_win(&self) -> bool {
         self.board.total_count

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Cell from "./Cell.vue";
-const bomb = "&#128163"
+
 var iter: number[][] = init();
 
 function init(): number[][] {
