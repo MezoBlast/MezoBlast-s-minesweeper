@@ -1,16 +1,25 @@
+
 <script setup lang="ts">
 import { ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 import { WebviewWindow } from "@tauri-apps/api/window";
 
-const greetMsg = ref("");
-const name = ref("");
-const w = ref();
-const h = ref();
-const m = ref();
+/*
+  Start.vue has Several missions:
+  - Get the input from the user
+  - Invoke the rust function to start the game
+  - Pass width and height to Display.vue for display
+  - Pop up a window/Replace current setting to show the result?
+  - Wait for async GameResult from rust. Show Win/Lose and ask for restart.
+*/
 
-async function greet() {
-  greetMsg.value = await invoke("greet", { name: name.value });
+const name = ref("");
+const w = ref("");
+const h = ref("");
+const m = ref("");
+
+function start() {
+  invoke("greet", { width: w , height: h, mines: m });
 }
 
 </script>
@@ -23,7 +32,7 @@ async function greet() {
       <p><input id="greet-input" v-model="m" placeholder="number of mines" /></p>
     </div>
     <div id="clickarea">
-      <button type="button" @click="greet" >Greet</button>
+      <button type="button" @click="start" >Start</button>
     </div>
     
   </div>
@@ -33,16 +42,4 @@ async function greet() {
 </template>
 
 <style>
-/* #startarea{
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-}
-#inputarea{
-  float: left;
-  display: inline;
-}
-#clickarea{
-  float: right;
-  display: inline;
-} */
 </style>

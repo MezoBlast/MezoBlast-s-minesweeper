@@ -1,3 +1,5 @@
+pub mod cli;
+
 use rand::{seq::SliceRandom};
 use std::process;
 use std::process::Stdio;
