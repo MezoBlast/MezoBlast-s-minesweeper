@@ -5,7 +5,7 @@ fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![cli::start])
-        .invoke_handler(tauri::generate_handler![cli::vec_gen])
+        .invoke_handler(tauri::generate_handler![cli::display])
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .run(context)
         .expect("error while running tauri application");

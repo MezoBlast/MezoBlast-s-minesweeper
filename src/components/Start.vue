@@ -1,25 +1,40 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/tauri";
-import { WebviewWindow } from "@tauri-apps/api/window";
+import { winConfig, Windows } from "./Window";
+import { emit, listen } from "@tauri-apps/api/event";
+import { parameterConfig } from "./Parameters"
 
-/*
-  Start.vue has Several missions:
-  - Get the input from the user
-  - Invoke the rust function to start the game
-  - Pass width and height to Display.vue for display
-  - Pop up a window/Replace current setting to show the result?
-  - Wait for async GameResult from rust. Show Win/Lose and ask for restart.
-*/
-
-const name = ref("");
+const displayWindow: winConfig = {
+    label: 'playBoard',            // 窗口唯一label
+    others: {
+      title: 'minesweeper',              // 窗口标题
+      url: '../../playboard.html', // 窗口加载的url
+      width: 800,             // 窗口宽度
+      height: 640,            // 窗口高度
+      minWidth: 0,         // 窗口最小宽度
+      minHeight: 0,        // 窗口最小高度
+      center: true,           // 窗口居中显示
+      resizable: false,        // 是否支持缩放
+      maximized: false,       // 最大化窗口
+      decorations: true,     // 窗口是否无边框及导航条
+      alwaysOnTop: false,     // 置顶窗口
+    }
+}
 const w = ref("");
 const h = ref("");
 const m = ref("");
 
-function start() {
-  invoke("greet", { width: w , height: h, mines: m });
+var windows: Windows = new Windows();
+windows.listen();
+
+async function start() {
+  const params: parameterConfig = {
+    width: w.value,
+    height: h.value,
+  }
+  await emit("tauri-win-create", displayWindow)
+  await emit("parameter-init", params)
 }
 
 </script>
@@ -36,8 +51,6 @@ function start() {
     </div>
     
   </div>
-  
-  <!-- <div>{{ greetMsg }}</div> -->
 
 </template>
 

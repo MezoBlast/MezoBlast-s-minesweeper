@@ -1,41 +1,48 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { Ref, ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 import Cell from "./Cell.vue";
 
-/*  
-  Display component has three missions:
-  1. After start, initialize and display the board
-  2. After click/right click, invoke the rust function to update game
-  3. After update, display the board
-  
-  Current thoughts on API：
-  - Board is a 2D array of Cell (from Cell.vue)
-  - Each cell contains a cellbutton (see Cell.vue))
-  - Cell is in charge of click and right click
-  - Cell is also in charge of displaying the content with **emoji**
-*/
-var iter: number[][] = init();
-
-function init(): number[][] {
-  var original: number[] = invoke("display", {n: 400});
-  var iter: number[][] = [[]] ;
-  for (let i = 0; i < 20; i++) {
-    iter.push([]);
-    for (let j = 0; j < 20; j++) {
-      iter[i].push(original[i*20+j]);
+const props = defineProps(
+  {
+    width: Number,
+    height: Number,
+  }
+)
+const board: Ref<string[]> = ref([]);
+const iter: Ref<string[][]> = ref([[]]);
+async function read_into() {
+  board.value = await invoke("display", {n: props.width!*props.height!});
+  for (let i = 0; i < props.width!; i++) {
+    iter.value[i] = []
+    for (let j = 0; j < props.width!; j++) {
+      iter.value[i][j] = board.value[i*props.width!+j]
+      // iter.value[i].push(board.value[i*w+j]);
     }
   }
-  return iter;
+}
+read_into();
+
+function button_left_click(x: Number, y: Number): void {
+  console.log("Button at "+x+", "+y+" is left clicked");
+  read_into();
+}
+function button_right_click(x: Number, y: Number): void {
+  console.log("Button at "+x+", "+y+" is right clicked");
+  read_into();
 }
 
 </script>
 
 <template>
   <div class="container">
-    <div class="container" id="row" v-for="item in iter">
-      <div class="container" id="col" v-for="item in iter">
-        <Cell />
+    <div class="container" id="row" v-for="(line, row) in iter">
+      <div class="container" id="col" v-for="(item, col) in line">
+        <Cell 
+          :button-style=item
+          @left-click="button_left_click(row, col)"
+          @right-click="button_right_click(row, col)"
+        />
       </div>
     </div>
   </div>

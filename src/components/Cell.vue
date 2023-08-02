@@ -1,23 +1,36 @@
 <script setup lang="ts">
+import { event } from "@tauri-apps/api";
 import { E } from "@tauri-apps/api/path-c062430b";
 import { ref } from "vue";
 
+const props = defineProps(
+  {
+    buttonStyle: String,
+  }
+);
+const events = defineEmits(['leftClick', 'rightClick']);
 const bomb = "&#128163";
 const flag = "&#128681";
 const content = ref("");
 const width = ref(20);
 const height = ref(20);
 
-function click(event: MouseEvent) {
-  content.value = bomb;
-}
-function rightclick(event: MouseEvent) {
-  content.value = flag;
-}
+// function click(event: MouseEvent) {
+//   content.value = bomb;
+// }
+// function rightclick(event: MouseEvent) {
+//   content.value = flag;
+// }
 </script>
 
 <template>
-  <button id="cellbutton" @click.prevent="click" @auxclick.prevent="rightclick" @contextmenu.prevent v-html="content">
+  <button
+    class = "cellbutton"
+    :class="props.buttonStyle"
+    @click="$emit('leftClick')"
+    @contextmenu.prevent="$emit('rightClick')"
+    v-html="content"
+    >
   </button>
 </template>
 
@@ -35,7 +48,7 @@ function rightclick(event: MouseEvent) {
   flex-direction: column;
 }
 
-#cellbutton {
+.cellbutton {
   width: 20px;
   height: 20px;
   padding: 0px 0px;
