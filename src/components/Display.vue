@@ -3,6 +3,7 @@ import { Ref, ref } from "vue";
 import { invoke } from "@tauri-apps/api/tauri";
 import Cell from "./Cell.vue";
 
+
 const props = defineProps(
   {
     width: Number,

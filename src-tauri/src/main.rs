@@ -1,9 +1,29 @@
 use MS::*;
+use tauri::Manager;
+use std::sync::mpsc;
+use std::thread;
 
 #[cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
+        .setup(|app| {
+            let (tx, rx) = mpsc::channel();
+            let id = app.listen_global(
+                "tauri-playboard-init",
+                move |event| {
+                    let content = event.payload().unwrap().clone().to_string();
+                    println!("Received event: {:?}", content);
+                    tx.clone().send(content).unwrap();
+                }
+            );
+            thread::spawn(move || {
+                let content = rx.recv().unwrap();
+                println!("Event redistributed: {:?}", content);
+            });
+            // app.unlisten(id);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![cli::start])
         .invoke_handler(tauri::generate_handler![cli::display])
         .menu(tauri::Menu::os_default(&context.package_info().name))
