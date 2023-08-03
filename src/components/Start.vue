@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { winConfig, Windows } from "./Window";
 import { emit, listen } from "@tauri-apps/api/event";
 import { parameterConfig } from "./Parameters"
+import { invoke } from "@tauri-apps/api";
 
 const displayWindow: winConfig = {
     label: 'playBoard',            // 窗口唯一label
@@ -24,19 +25,15 @@ const displayWindow: winConfig = {
 const w = ref("");
 const h = ref("");
 const m = ref("");
+const startDisabled = ref(false);
 
 var windows: Windows = new Windows();
 windows.listen();
 
 async function start() {
-  const params: parameterConfig = {
-    width: w.value,
-    height: h.value,
-  }
-  await emit("tauri-win-create", displayWindow)
-  await emit("parameter-init", params)
+  startDisabled.value = true;
+  await invoke('start_game', {width: w.value, height: h.value, mines: m.value})
 }
-
 </script>
 
 <template>
@@ -47,7 +44,11 @@ async function start() {
       <p><input id="greet-input" v-model="m" placeholder="number of mines" /></p>
     </div>
     <div id="clickarea">
-      <button type="button" @click="start" >Start</button>
+      <button
+        type="button"
+        @click="start"
+        :disabled="startDisabled" 
+        >Start</button>
     </div>
     
   </div>

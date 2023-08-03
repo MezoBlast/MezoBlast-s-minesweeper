@@ -159,6 +159,14 @@ impl Game {
             status,
         })
     }
+    pub fn placehold() -> Game {
+        let config = GameConfig{width: 0, height: 0, mines: 0};
+        Game::init(config).unwrap()
+    }
+    pub fn init_ref(config: GameConfig, game: &mut Game) -> Result<(), &'static str> {
+        *game = Game::init(config)?;
+        Ok(())
+    }
     pub fn try_update(&mut self, input: &Input) -> Result<(), &'static str> {
         let (x, y) = (input.x, input.y);
         if !on_board(
