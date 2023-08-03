@@ -69,7 +69,7 @@ pub async fn main_thread(
 
 /// Start a new game
 /// Write into the api_tx channel
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub async fn start_game(
     width: String,
     height: String,
@@ -77,7 +77,7 @@ pub async fn start_game(
     input: tauri::State<'_, AsyncProcInputTx>,
 ) -> Result<(), String> {
     let input_tx = input.tx.lock().await;
-    let args = vec![width, height, mines];
+    let args = vec!["".to_string(), width, height, mines]; // Here the first argument is the program name
     let game_config: GameConfig = GameConfig::init(&args)?;
     let start_game_config = AsyncInput::StartGame(game_config);
     input_tx
@@ -115,10 +115,10 @@ async fn create_window<R: tauri::Runtime>(
         "playboard",
         tauri::WindowUrl::App("../../dist/playboard.html".into()),
     );
+    playboard.build().unwrap();
     manager
-        .emit_to(
-            "playboard",
-            "parameter-init",
-            format!("{{width: {}, height: {}}}", w, h)
-        ).unwrap();
+    .emit_all(
+        "parameter_init",
+        format!("{{width: {}, height: {}}}", w, h)
+    ).unwrap();
 }

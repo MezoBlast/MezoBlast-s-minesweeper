@@ -2,7 +2,7 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
 import Start from "./components/Start.vue";
-
+import Testboard from "./components/Testboard.vue";
 </script>
 
 <template>
@@ -11,6 +11,12 @@ import Start from "./components/Start.vue";
       <div>
         <Start />
       </div>
+      <div>
+      <p>From App.vue</p>
+      <Suspense>
+        <Testboard listen_method="parameterInit"/>
+      </Suspense>
+    </div>
   </div>
 </template>
 

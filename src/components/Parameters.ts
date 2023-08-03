@@ -10,13 +10,14 @@ export class Parameter {
     width: number = 0
     height: number = 0
 
-    init(p: parameterConfig) {
+    init(params: string) {
+        const p = JSON.parse(params)
         this.width = Number(p.width)
         this.height = Number(p.height)
     }
 
     async listen() {
-        await listen<parameterConfig>('parameter-init', (event) => {
+        await listen<string>('parameter-init', (event) => {
             console.log(event.payload)
             this.init(event.payload)
         })
