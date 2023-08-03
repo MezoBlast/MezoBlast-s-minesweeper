@@ -12,7 +12,7 @@ import Testboard from "./components/Testboard.vue";
         <Start />
       </div>
       <div>
-      <p>From App.vue</p>
+      <p style="color: aqua;">From App.vue</p>
       <Suspense>
         <Testboard listen_method="parameterInit"/>
       </Suspense>
