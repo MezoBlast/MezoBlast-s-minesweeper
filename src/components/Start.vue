@@ -3,13 +3,12 @@
 import { ref } from "vue";
 import { winConfig, Windows } from "./Window";
 import { emit, listen } from "@tauri-apps/api/event";
-import { parameterConfig } from "./Parameters"
 
 const displayWindow: winConfig = {
     label: 'playBoard',            // 窗口唯一label
     others: {
       title: 'minesweeper',              // 窗口标题
-      url: '../../playboard.html', // 窗口加载的url
+      url: '../../dist/playboard.html', // 窗口加载的url
       width: 800,             // 窗口宽度
       height: 640,            // 窗口高度
       minWidth: 0,         // 窗口最小宽度
@@ -29,14 +28,11 @@ var windows: Windows = new Windows();
 windows.listen();
 
 async function start() {
-  const params: parameterConfig = {
-    width: w.value,
-    height: h.value,
-  }
   await emit("tauri-win-create", displayWindow)
-  await emit("parameter-init", params)
+  await emit("tauri-playboard-init", {width: w.value,height: h.value})
 }
 
+console.log("start");
 </script>
 
 <template>
