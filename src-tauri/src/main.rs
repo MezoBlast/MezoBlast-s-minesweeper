@@ -31,8 +31,10 @@ fn main() {
         });
         return Ok(());
     })
-    .invoke_handler(tauri::generate_handler![cli::start_game])
-    .invoke_handler(tauri::generate_handler![cli::display])
+    .invoke_handler(tauri::generate_handler![
+        cli::start_game,
+        cli::display
+    ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

@@ -89,17 +89,16 @@ pub async fn start_game(
 pub async fn output_handler<R: tauri::Runtime>(
     output: AsyncOutput,
     manager: &impl tauri::Manager<R>,
-) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+) {
     match output {
         AsyncOutput::Error(e) => {
             manager.emit_all("error", e).unwrap();
         }
         AsyncOutput::Window(w, h) => {
-            create_window(w, h, manager).await?;
+            create_window(w, h, manager).await;
         }
         _ => (),
     };
-    Ok(())
 }
 // remember to call `.manage(MyState::default())`
 #[tauri::command]
@@ -107,16 +106,19 @@ pub fn display(n: usize) -> Vec<String> {
     vec![String::from("&#128681;"); n]
 }
 
-fn create_window<R: tauri::Runtime>(
+async fn create_window<R: tauri::Runtime>(
     w: usize, h: usize,
     manager: &impl tauri::Manager<R>
-)  {
+) {
     let playboard = tauri::WindowBuilder::new(
         manager,
         "playboard",
         tauri::WindowUrl::App("../../dist/playboard.html".into()),
     );
     manager
-        .emit_to("playboard", "parameter-init", format!("{}, {}", w, h))
-        .and_then(|_| playboard.create
+        .emit_to(
+            "playboard",
+            "parameter-init",
+            format!("{{width: {}, height: {}}}", w, h)
+        ).unwrap();
 }

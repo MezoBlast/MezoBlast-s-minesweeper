@@ -32,7 +32,7 @@ windows.listen();
 
 async function start() {
   startDisabled.value = true;
-  await invoke('start_game', {width: w.value, height: h.value, mines: m.value})
+  await invoke('start_game', {width: w, height: h, mines: m})
 }
 </script>
 
